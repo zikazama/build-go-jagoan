@@ -30,14 +30,17 @@ curl -X DELETE "http://localhost:8080/product/delete?id=3"
 ```
 
 ## Example .service
+
+Simpan file ini sebagai go-api.service dan salin ke direktori /etc/systemd/system/ di VPS.
+
 ```
 [Unit]
-Description=My Go API Service
+Description=Go API App
 
 [Service]
-ExecStart=/path/to/myapp
+ExecStart=./build-go-jagoan/main.go
 Restart=always
-User=www-data
+User=root
 
 [Install]
 WantedBy=multi-user.target
@@ -80,4 +83,22 @@ sudo systemctl enable nginx
 
 ```
 sudo ufw allow 'Nginx Full'
+```
+
+## Basic Config nginx
+
+```
+server {
+    listen 80;
+    
+    # Gunakan alamat IP VPS sebagai server_name
+    server_name 123.45.67.89;
+
+    location / {
+        proxy_pass http://localhost:8080;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+}
 ```
